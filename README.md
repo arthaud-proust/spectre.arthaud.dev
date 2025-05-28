@@ -1,9 +1,9 @@
 # [Spectre](https://spectre.app)
 
+> [!Important]
+> This is a fork of https://gitlab.com/spectre.app/web/-/tree/main
+
 Spectre introduces a completely new way of thinking about passwords.
-
-[[_TOC_]]
-
 
 ## Don't store; derive
 
