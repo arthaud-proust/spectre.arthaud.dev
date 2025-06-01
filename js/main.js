@@ -33,7 +33,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const siteCounterInput = site.querySelector('[name="siteCounter"]');
     const siteTypeInput = site.querySelector('[name="siteType"]');
     const siteResult = site.querySelector('#siteResult');
-    const siteResultButton = siteResult.querySelector('button');
+    const siteResultToggleRevealButton = siteResult.querySelector('& > span > button');
+    const siteResultButton = siteResult.querySelector('& > button');
     const siteResultInput = siteResultButton.querySelector('input');
     const siteResultCopyHint = siteResult.querySelector('p');
     
@@ -142,14 +143,24 @@ window.addEventListener('DOMContentLoaded', () => {
         updateSpectre();
     });
 
+    siteResultToggleRevealButton.addEventListener('click', () => {
+        const isPassword = siteResultInput.type === 'password';
+        siteResultInput.type = isPassword ? 'text' : 'password';
+
+        siteResultToggleRevealButton.querySelector('i:first-of-type').setAttribute('aria-hidden', isPassword);
+        siteResultToggleRevealButton.querySelector('i:last-of-type').setAttribute('aria-hidden', !isPassword);
+    });
+
     siteForm.addEventListener('submit', (e) => {
         e.preventDefault()
        
         siteResultInput.select()
         if (navigator.clipboard.writeText(siteResultInput.value) || document.execCommand('copy')) {
             siteResultCopyHint.setAttribute('aria-hidden', false);
+            siteResultButton.setAttribute('aria-hidden', true);
             setTimeout(() => {
                 siteResultCopyHint.setAttribute('aria-hidden', true);
+                siteResultButton.setAttribute('aria-hidden', false);
             }, 2000);
         }
     });

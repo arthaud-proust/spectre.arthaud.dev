@@ -17,7 +17,7 @@
 
 <body>
     <main data-loading="false">
-        <section id="user" data-active="true">
+        <section id="user" aria-hidden="ƒalse">
             <form>
                 <label>
                     <i class="fa-duotone fa-fw fa-user-large"></i>
@@ -60,7 +60,7 @@
             </div>
         </section>
 
-        <section id="site" data-active="false">
+        <section id="site" aria-hidden="true">
             <form>
                 <label>
                     <i class="fa-duotone fa-fw fa-globe"></i>
@@ -84,17 +84,20 @@
                 </label>
 
                 <label id="siteResult">
-                    <details>
-                        <summary>
-                            Result
-                        </summary>
+                    <span>
+                        Result
 
-                        <button type="submit">
-                            <i class="fa-duotone fa-fw fa-copy"></i>
-                            <input type="text" disabled placeholder="eg. 1lsj19)#akWJ" />
+                        <button type="button">
+                            <i class="fa-duotone fa-fw fa-eye"></i>
+                            <i aria-hidden="true" class="fa-duotone fa-fw fa-eye-slash"></i>
                         </button>
-                        <small>Click to copy</small>
-                    </details>
+                    </span>
+
+
+                    <button type="submit">
+                        <i class="fa-duotone fa-fw fa-copy"></i>
+                        <input type="password" disabled placeholder="eg. 1lsj19)#akWJ" />
+                    </button>
 
                     <p aria-hidden="true">
                         <i class="fa-duotone fa-fw fa-lg fa-circle-check"></i>

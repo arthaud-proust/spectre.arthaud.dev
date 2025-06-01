@@ -98,13 +98,21 @@ main[data-loading="true"] #user form {
 
 #siteResult button {
     display: flex;
-    gap: 1rem;
+    gap: .8rem;
 }
 #siteResult.empty {
     pointer-events: none;
     user-select: none; 
 }
-#siteResult button input {
+#siteResult span button {
+    background: none;
+    border:none;
+    display: inline;
+    width: auto;
+    margin: -1rem;
+    padding: 1rem;
+}
+#siteResult > button input {
     padding: 0;
     border: none;
     display: inline-block;
@@ -118,13 +126,12 @@ main[data-loading="true"] #user form {
 #siteResult p {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: .5rem;
     margin-top: .4rem;
-    padding: 1rem;
+    padding: .8rem 1rem;
     color: var(--green-900);
     background: var(--green-300);
     border-radius: 10px;
-    font-size: 1.1rem;
     font-weight: 600;
 }
 
