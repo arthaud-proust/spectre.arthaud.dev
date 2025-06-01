@@ -1,7 +1,11 @@
-# [Spectre](https://spectre.app)
+# [Spectre Fork](https://spectre.arthaud.dev)
 
-> [!Important]
-> This is a fork of https://gitlab.com/spectre.app/web/-/tree/main
+a customized fork of https://gitlab.com/spectre.app/web/-/tree/main with :
+- remember me feature
+- responsive
+- hide generated password
+
+## Original presentation
 
 Spectre introduces a completely new way of thinking about passwords.
 
