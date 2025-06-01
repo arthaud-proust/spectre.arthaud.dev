@@ -157,6 +157,13 @@ main[data-loading="true"] #user form {
     font-weight: 600;
 }
 
+#signout {
+    --color: var(--blue-800);
+}
+#signout:hover {
+    --color: var(--blue-700);
+}
+
 /* Utility */
 section {
     display: flex;
