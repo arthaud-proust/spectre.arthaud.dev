@@ -1,67 +1,73 @@
-function spinnerBusy(element, busy) {
-    element.data("spin", busy);
+class LocalSave {
+    key = 'spectre'
 
-    if (busy) {
-        element.finish().fadeIn();
-    } else {
-        element.finish().fadeOut();
+    remember(userName, secret, algorithm) {
+        localStorage.setItem(this.key, JSON.stringify({userName, secret, algorithm}));
+    }
+    
+    forget() {
+        localStorage.removeItem(this.key);
+    }
+    
+    retrieve() { 
+        return JSON.parse(localStorage.getItem(this.key)) ?? {};
     }
 }
 
-$(() => {
-    let signOutButton = $('#signout');
-    let user = $('#user');
-    let userForm = user.find('form');
-    let userName = user.find('#userName');
-    let userNameInput = userName.find('input');
-    let userSecret = user.find('#userSecret');
-    let userSecretInput = userSecret.find('input');
-    let userSecretSpinner = userSecret.find('.fa-spin');
-    let userAlgorithm = user.find('#algorithmVersion');
-    let userAlgorithmInput = userAlgorithm.find('select');
-    let userMessage = user.find('p.info');
-    let userError = user.find('p.error');
-    let site = $('#site');
-    let siteForm = site.find('form');
-    let siteName = site.find('#siteName');
-    let siteNameInput = siteName.find('input');
-    let sitePurposeInputs = site.find('input[name="sitePurpose"]');
-    let siteCounter = site.find('#siteCounter');
-    let siteCounterInput = siteCounter.find('input');
-    let siteType = site.find('#siteType');
-    let siteTypeInput = siteType.find('select');
-    let siteResult = site.find('#siteResult');
-    let siteResultSpinner = siteResult.find('.fa-spin');
-    let siteResultButton = siteResult.find('button');
-    let siteResultInput = siteResultButton.find('input')
-    let siteMessage = site.find('p.info');
-    let siteError = site.find('p.error');
+window.addEventListener('DOMContentLoaded', () => {
+    const localSave = new LocalSave();
+    
+    const main = document.querySelector('main');
 
+    const user = document.getElementById('user');
+    const userForm = user.querySelector('form');
+    const userNameInput = user.querySelector('[name="userName"]');
+    const userSecretInput = user.querySelector('[name="userSecret"]');
+    const userAlgorithmInput = user.querySelector('[name="algorithmVersion"]');
+    const userRememberMeCheckbox = user.querySelector('[name="rememberMe"]');
+
+    const site = document.getElementById('site');
+    const siteForm = site.querySelector('form');
+    const siteNameInput = site.querySelector('[name="siteName"]');
+    const sitePurposeInputs = site.querySelectorAll('[name="sitePurpose"]');
+    const siteCounterInput = site.querySelector('[name="siteCounter"]');
+    const siteTypeInput = site.querySelector('[name="siteType"]');
+    const siteResult = site.querySelector('#siteResult');
+    const siteResultButton = siteResult.querySelector('button');
+    const siteResultInput = siteResultButton.querySelector('input');
+    const siteResultCopyHint = siteResult.querySelector('p');
+    
+    const signOutButton = document.getElementById('signout');
+
+    function getSelectedPurposeInput () {
+        return Array.from(sitePurposeInputs).find(el=>el.checked);
+    }
+    
     for (template in spectre.templates) {
-        let option = document.createElement('option');
+        const option = document.createElement('option');
         option.text = spectre.resultName[template];
         option.value = template;
-        siteTypeInput[0].add(option);
+        siteTypeInput.appendChild(option);
     }
     for (option of sitePurposeInputs) {
         option.checked = option.value === spectre.purpose.authentication;
     }
 
     function updateDefaults() {
-        userAlgorithmInput[0].value = spectre.algorithm.current;
-        siteCounterInput[0].value = spectre.counter.initial;
+        userAlgorithmInput.value = spectre.algorithm.current;
+        siteCounterInput.value = spectre.counter.initial;
         
-        switch (sitePurposeInputs.filter(':checked')[0].value) {
+        switch (getSelectedPurposeInput()?.value) {
             case spectre.purpose.authentication: {
-                siteTypeInput[0].value = spectre.resultType.defaultPassword;
+                siteTypeInput.value = spectre.resultType.defaultPassword;
                 break;
             }
             case spectre.purpose.identification: {
-                siteTypeInput[0].value = spectre.resultType.defaultLogin;
+                siteTypeInput.value = spectre.resultType.defaultLogin;
                 break;
             }
             case spectre.purpose.recovery: {
-                siteTypeInput[0].value = spectre.resultType.defaultAnswer;
+                siteTypeInput.value = spectre.resultType.defaultAnswer;
                 break;
             }
         }
@@ -69,31 +75,33 @@ $(() => {
 
     function updateSpectre() {
         spectre.request(
-            siteNameInput[0].value,
-            siteTypeInput[0].value,
-            siteCounterInput[0].value,
-            sitePurposeInputs.filter(':checked')[0].value,
+            siteNameInput.value,
+            siteTypeInput.value,
+            siteCounterInput.value,
+            getSelectedPurposeInput()?.value,
             null //keyContext
         );
     }
 
     function updateView() {
-        spinnerBusy(userSecretSpinner, spectre.operations.user.pending);
-        spinnerBusy(siteResultSpinner, spectre.operations.site.pending);
+        main.dataset.loading = spectre.operations.user.pending || spectre.operations.site.pending;
 
-        userNameInput.val(spectre.operations.user.userName);
-        userSecretInput.val(null);
-        siteResultInput.val(spectre.result(siteNameInput[0].value, sitePurposeInputs.filter(':checked')[0].value));
+        userNameInput.value = spectre.operations.user.userName;
+        userSecretInput.value = null;
+
+        const result = spectre.result(siteNameInput.value, getSelectedPurposeInput()?.value);
+        siteResult.classList.toggle("empty", result == null);
+        siteResultInput.value = result ?? "";
 
         if (spectre.operations.user.authenticated) {
-            user.attr("data-active", false);
-            site.attr("data-active", true);
+            user.setAttribute("aria-hidden", true);
+            site.setAttribute("aria-hidden", false);
             siteNameInput.focus()
         } else {
-            user.attr("data-active", true);
-            site.attr("data-active", false);
-            userAlgorithmInput.val(spectre.algorithm.current);
-            siteNameInput.val(null);
+            user.setAttribute("aria-hidden", false);
+            site.setAttribute("aria-hidden", true);
+            userAlgorithmInput.value = spectre.algorithm.current;
+            siteNameInput.value = null;
             userNameInput.focus()
         }
     }
@@ -102,35 +110,52 @@ $(() => {
     spectre.observers.push(updateView);
     updateView();
 
-    userForm.on('submit', (e) => {
+    const retrieved = localSave.retrieve();
+    if(retrieved.userName && retrieved.secret && retrieved.algorithm) {
+        spectre.authenticate(retrieved.userName, retrieved.secret, retrieved.algorithm);
+    }
+
+    userForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        spectre.authenticate(userNameInput[0].value, userSecretInput[0].value, userAlgorithmInput[0].value);
+        
+        if (userRememberMeCheckbox.checked) {
+            localSave.remember(userNameInput.value, userSecretInput.value, userAlgorithmInput.value);
+        }
+
+        spectre.authenticate(userNameInput.value, userSecretInput.value, userAlgorithmInput.value);
     });
-    siteForm.on('submit', (e) => {
+
+
+    siteNameInput.addEventListener('input', () => {
+        updateSpectre();
+    });
+    sitePurposeInputs.forEach(el=>{
+        el.addEventListener('input', () => {
+            updateDefaults();
+            updateSpectre();
+        });
+    });
+    siteCounterInput.addEventListener('input', () => {
+        updateSpectre();
+    });
+    siteTypeInput.addEventListener('input', () => {
+        updateSpectre();
+    });
+
+    siteForm.addEventListener('submit', (e) => {
         e.preventDefault()
+       
         siteResultInput.select()
-        if (navigator.clipboard.writeText(siteResultInput[0].value) || document.execCommand('copy')) {
-            siteResultButton.attr("title", "Copied!").tooltip("_fixTitle").tooltip("show");
+        if (navigator.clipboard.writeText(siteResultInput.value) || document.execCommand('copy')) {
+            siteResultCopyHint.setAttribute('aria-hidden', false);
             setTimeout(() => {
-                siteResultButton.tooltip("hide").attr("title", "Copy Password").tooltip("_fixTitle");
-            }, 1000);
+                siteResultCopyHint.setAttribute('aria-hidden', true);
+            }, 2000);
         }
     });
 
-    signOutButton.on('click', () => {
+    signOutButton.addEventListener('click', () => {
         spectre.invalidate();
-    });
-    siteNameInput.on('input', () => {
-        updateSpectre();
-    });
-    sitePurposeInputs.on('input', () => {
-        updateDefaults();
-        updateSpectre();
-    });
-    siteCounterInput.on('input', () => {
-        updateSpectre();
-    });
-    siteTypeInput.on('input', () => {
-        updateSpectre();
+        localSave.forget();
     });
 });
