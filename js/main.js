@@ -14,6 +14,18 @@ class LocalSave {
     }
 }
 
+const templatesOrder = Object.freeze([
+    spectre.resultType.templateMaximum,
+    spectre.resultType.templateLong,
+    spectre.resultType.templateMedium,
+    spectre.resultType.templateShort,
+    spectre.resultType.templateBasic,
+    spectre.resultType.templateLongBasic,
+    spectre.resultType.templatePIN,
+    spectre.resultType.templateName,
+    spectre.resultType.templatePhrase,
+]);
+
 window.addEventListener('DOMContentLoaded', () => {
     const localSave = new LocalSave();
     
@@ -45,7 +57,7 @@ window.addEventListener('DOMContentLoaded', () => {
         return Array.from(sitePurposeInputs).find(el=>el.checked);
     }
     
-    for (template in spectre.templates) {
+    for (template of templatesOrder) {
         const option = document.createElement('option');
         option.text = spectre.resultName[template];
         option.value = template;

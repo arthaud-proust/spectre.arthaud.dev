@@ -80,11 +80,13 @@ spectre.resultType = {
     templateBasic: 0x4 | spectre.class.template | spectre.feature.none,
     /** 21: 2798 */
     templatePIN: 0x5 | spectre.class.template | spectre.feature.none,
+    /** 22: pO98MoD0BiroYena41quQSwI11cefefi */
+    templateLongBasic: 0x6 | spectre.class.template | spectre.feature.none,
     /** 30: birsujano */
     templateName: 0xE | spectre.class.template | spectre.feature.none,
     /** 31: bir yennoquce fefi */
     templatePhrase: 0xF | spectre.class.template | spectre.feature.none,
-
+    
     /** 1056: Custom saved result. */
     statePersonal: 0x0 | spectre.class.stateful | spectre.feature.exportContent,
     /** 2081: Custom saved result that should not be exported from the device. */
@@ -104,7 +106,8 @@ spectre.resultName = Object.freeze({
     [spectre.resultType.templateLong]: "Long",
     [spectre.resultType.templateMedium]: "Medium",
     [spectre.resultType.templateShort]: "Short",
-    [spectre.resultType.templateBasic]: "Basic",
+    [spectre.resultType.templateBasic]: "Alphanumeric (alias basic)",
+    [spectre.resultType.templateLongBasic]: "Long alphanumeric",
     [spectre.resultType.templatePIN]: "PIN",
     [spectre.resultType.templateName]: "Name",
     [spectre.resultType.templatePhrase]: "Phrase",
@@ -163,6 +166,19 @@ spectre.templates = Object.freeze({
         "aaanaaan",
         "aannaaan",
         "aaannaaa"
+    ],
+    [spectre.resultType.templateLongBasic]: [
+        "aaanaaanaaaaanaaanaaaaanna",
+        "aaanaaanaaaannaaananaannaa",
+        "aaanaaanaaaaannaaaanaaanna",
+        
+        "aannaaananaaanaaanaaaaanna",
+        "aannaaananaannaaananaannaa",
+        "aannaaananaaannaaaanaaanna",
+        
+        "aaannaaaanaaanaaanaaaaanna",
+        "aaannaaaanaannaaananaannaa",
+        "aaannaaaanaaannaaaanaaanna",
     ],
     [spectre.resultType.templatePIN]: [
         "nnnn"
