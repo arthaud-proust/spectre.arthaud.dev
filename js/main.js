@@ -23,6 +23,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const userForm = user.querySelector('form');
     const userNameInput = user.querySelector('[name="userName"]');
     const userSecretInput = user.querySelector('[name="userSecret"]');
+    const userSecretToggleRevealButton = user.querySelector('#userSecretContainer > button');
     const userAlgorithmInput = user.querySelector('[name="algorithmVersion"]');
     const userRememberMeCheckbox = user.querySelector('[name="rememberMe"]');
 
@@ -33,10 +34,10 @@ window.addEventListener('DOMContentLoaded', () => {
     const siteCounterInput = site.querySelector('[name="siteCounter"]');
     const siteTypeInput = site.querySelector('[name="siteType"]');
     const siteResult = site.querySelector('#siteResult');
-    const siteResultToggleRevealButton = siteResult.querySelector('& > span > button');
-    const siteResultButton = siteResult.querySelector('& > button');
+    const siteResultToggleRevealButton = siteResult.querySelector('button[type="button"]');
+    const siteResultButton = siteResult.querySelector('button[type="submit"]');
     const siteResultInput = siteResultButton.querySelector('input');
-    const siteResultCopyHint = siteResult.querySelector('p');
+    const siteResultCopied = site.querySelector('#siteResultCopied');
     
     const signOutButton = document.getElementById('signout');
 
@@ -116,6 +117,14 @@ window.addEventListener('DOMContentLoaded', () => {
         spectre.authenticate(retrieved.userName, retrieved.secret, retrieved.algorithm);
     }
 
+    userSecretToggleRevealButton.addEventListener('click', () => {
+        const isPassword = userSecretInput.type === 'password';
+        userSecretInput.type = isPassword ? 'text' : 'password';
+
+        userSecretToggleRevealButton.querySelector('i:first-of-type').setAttribute('aria-hidden', isPassword);
+        userSecretToggleRevealButton.querySelector('i:last-of-type').setAttribute('aria-hidden', !isPassword);
+    });
+
     userForm.addEventListener('submit', (e) => {
         e.preventDefault();
         
@@ -156,11 +165,11 @@ window.addEventListener('DOMContentLoaded', () => {
        
         siteResultInput.select()
         if (navigator.clipboard.writeText(siteResultInput.value) || document.execCommand('copy')) {
-            siteResultCopyHint.setAttribute('aria-hidden', false);
-            siteResultButton.setAttribute('aria-hidden', true);
+            siteResultCopied.setAttribute('aria-hidden', false);
+            siteResult.setAttribute('aria-hidden', true);
             setTimeout(() => {
-                siteResultCopyHint.setAttribute('aria-hidden', true);
-                siteResultButton.setAttribute('aria-hidden', false);
+                siteResultCopied.setAttribute('aria-hidden', true);
+                siteResult.setAttribute('aria-hidden', false);
             }, 2000);
         }
     });

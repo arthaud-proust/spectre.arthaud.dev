@@ -29,8 +29,15 @@
                 <label>
                     <i class="fa-duotone fa-fw fa-user-lock"></i>
                     Spectre Secret
-                    <input required type="password" name="userSecret" placeholder="eg. banana colored duckling"
-                        autocomplete="current-password">
+                    <div id="userSecretContainer">
+                        <input required type="password" name="userSecret" placeholder="eg. banana colored duckling"
+                            autocomplete="current-password">
+
+                        <button type="button">
+                            <i class="fa-duotone fa-fw fa-eye"></i>
+                            <i aria-hidden="true" class="fa-duotone fa-fw fa-eye-slash"></i>
+                        </button>
+                    </div>
                 </label>
 
                 <label>
@@ -83,27 +90,26 @@
                     <select name="siteType"></select>
                 </label>
 
-                <label id="siteResult">
-                    <span>
-                        Result
+                <div>
+                    Result
+
+                    <div id="siteResult">
+                        <button type="submit">
+                            <i class="fa-duotone fa-fw fa-copy"></i>
+                            <input type="password" disabled placeholder="eg. 1lsj19)#akWJ" />
+                        </button>
 
                         <button type="button">
                             <i class="fa-duotone fa-fw fa-eye"></i>
                             <i aria-hidden="true" class="fa-duotone fa-fw fa-eye-slash"></i>
                         </button>
-                    </span>
+                    </div>
 
-
-                    <button type="submit">
-                        <i class="fa-duotone fa-fw fa-copy"></i>
-                        <input type="password" disabled placeholder="eg. 1lsj19)#akWJ" />
-                    </button>
-
-                    <p aria-hidden="true">
+                    <p id="siteResultCopied" aria-hidden="true">
                         <i class="fa-duotone fa-fw fa-lg fa-circle-check"></i>
                         Copied !
                     </p>
-                </label>
+                </div>
             </form>
 
             <hr>

@@ -95,24 +95,46 @@ main[data-loading="true"] #user form {
     opacity: 0.5;
 }
 
+#userSecretContainer {
+    position: relative;
+}
+#userSecretContainer button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 2.5rem;
+    border-radius: 0 10px 10px 0;
+    border: var(--blue-900) 1px solid;
+    border-left: none;
+}
 
-#siteResult button {
+#siteResult {
+    margin-top: .4rem;
     display: flex;
-    gap: .8rem;
+    background: var(--blue-700);
+    border-radius: 10px;
+    overflow: hidden;
 }
 #siteResult.empty {
     pointer-events: none;
     user-select: none; 
 }
-#siteResult span button {
-    background: none;
+#siteResult button[type="button"] {
     border:none;
+    border-left: 1px solid var(--blue-800);
+    border-radius: 0;
     display: inline;
     width: auto;
-    margin: -1rem;
-    padding: 1rem;
 }
-#siteResult > button input {
+#siteResult button[type="submit"] {
+    display: flex;
+    border-radius: 0;
+    gap: .8rem;
+}
+#siteResult button[type="submit"] input {
     padding: 0;
     border: none;
     display: inline-block;
@@ -123,7 +145,7 @@ main[data-loading="true"] #user form {
     background: none;
     pointer-events: none;
 }
-#siteResult p {
+#siteResultCopied {
     display: flex;
     align-items: center;
     gap: .5rem;
