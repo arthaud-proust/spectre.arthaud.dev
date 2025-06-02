@@ -190,4 +190,12 @@ window.addEventListener('DOMContentLoaded', () => {
         spectre.invalidate();
         localSave.forget();
     });
+
+    window.addEventListener('focus', ()=>{
+        if(site.getAttribute('aria-hidden') === 'false') {
+            siteNameInput.focus();
+        } else {
+            userNameInput.focus();
+        }
+    })
 });
