@@ -2,15 +2,15 @@ class LocalSave {
     key = 'spectre'
 
     remember(userName, secret, algorithm) {
-        localStorage.setItem(this.key, JSON.stringify({userName, secret, algorithm}));
+        sessionStorage.setItem(this.key, JSON.stringify({userName, secret, algorithm}));
     }
     
     forget() {
-        localStorage.removeItem(this.key);
+        sessionStorage.removeItem(this.key);
     }
     
     retrieve() { 
-        return JSON.parse(localStorage.getItem(this.key)) ?? {};
+        return JSON.parse(sessionStorage.getItem(this.key)) ?? {};
     }
 }
 

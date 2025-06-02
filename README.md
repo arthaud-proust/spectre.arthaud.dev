@@ -1,7 +1,7 @@
 # [Spectre Fork](https://spectre.arthaud.dev)
 
 a customized fork of https://gitlab.com/spectre.app/web/-/tree/main with :
-- remember me feature
+- "remember me until I close browser" feature
 - responsive
 - hide generated password
 
