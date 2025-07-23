@@ -48,11 +48,10 @@
 
 body {
     color: var(--white);
-    background: var(--blue-900);
+    background: var(--blue-800);
     min-height: 100dvh;
     display: flex;
     justify-content: center;
-    align-items: center;
 }
 
 main {
@@ -60,8 +59,18 @@ main {
     max-width: 400px;
     width: 100%;
     padding: 1.7rem 1.5rem;
-    background: var(--blue-800);
     border-radius: 1.5rem;
+}
+
+@media screen and (min-width: 640px) {
+    body {
+        background: var(--blue-900);
+        align-items: center;
+    }
+
+    main {
+        background: var(--blue-800);
+    }
 }
 
 main .loader {
