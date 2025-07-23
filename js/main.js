@@ -44,6 +44,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const siteNameInput = site.querySelector('[name="siteName"]');
     const sitePurposeInputs = site.querySelectorAll('[name="sitePurpose"]');
     const siteCounterInput = site.querySelector('[name="siteCounter"]');
+    const siteCounterIncrementButton = site.querySelector('#siteCounter-increment');
+    const siteCounterDecrementButton = site.querySelector('#siteCounter-decrement');
     const siteTypeInput = site.querySelector('[name="siteType"]');
     const siteResult = site.querySelector('#siteResult');
     const siteResultToggleRevealButton = siteResult.querySelector('button[type="button"]');
@@ -57,13 +59,13 @@ window.addEventListener('DOMContentLoaded', () => {
         return Array.from(sitePurposeInputs).find(el=>el.checked);
     }
     
-    for (template of templatesOrder) {
+    for (const template of templatesOrder) {
         const option = document.createElement('option');
         option.text = spectre.resultName[template];
         option.value = template;
         siteTypeInput.appendChild(option);
     }
-    for (option of sitePurposeInputs) {
+    for (const option of sitePurposeInputs) {
         option.checked = option.value === spectre.purpose.authentication;
     }
 
@@ -128,6 +130,32 @@ window.addEventListener('DOMContentLoaded', () => {
     if(retrieved.userName && retrieved.secret && retrieved.algorithm) {
         spectre.authenticate(retrieved.userName, retrieved.secret, retrieved.algorithm);
     }
+
+    const siteCounterValue = ()=>{
+        const value = parseInt(siteCounterInput.value)
+
+        return isNaN(value) ? 1 : value;
+    }
+    const canSiteCounterDecrement = ()=>  siteCounterValue() > 1;
+    siteCounterDecrementButton.disabled = !canSiteCounterDecrement();
+
+    siteCounterIncrementButton.addEventListener('click', () => {
+        const currentValue = siteCounterValue();
+        siteCounterInput.value = currentValue + 1;
+        updateSpectre();
+
+        siteCounterDecrementButton.disabled = !canSiteCounterDecrement();
+    });
+
+    siteCounterDecrementButton.addEventListener('click', () => {
+        if(!canSiteCounterDecrement())  return;
+
+        const currentValue = siteCounterValue();
+        siteCounterInput.value = currentValue - 1;
+        updateSpectre();
+
+        siteCounterDecrementButton.disabled = !canSiteCounterDecrement();
+    });
 
     userSecretToggleRevealButton.addEventListener('click', () => {
         const isPassword = userSecretInput.type === 'password';

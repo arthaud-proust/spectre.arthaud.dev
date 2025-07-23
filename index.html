@@ -80,7 +80,15 @@
                 <label>
                     <i class="fa-duotone fa-fw fa-hashtag"></i>
                     Counter
-                    <input type="number" name="siteCounter" placeholder="1" min="1" max="100" value="1" class="half" />
+                    <span>
+                        <input type="number" name="siteCounter" placeholder="1" min="1" max="100" value="1" class="half" />
+                        <button type="button" id="siteCounter-decrement" title="Increment">
+                            <i class="fa-solid fa-fw fa-minus"></i>
+                        </button>
+                        <button type="button" id="siteCounter-increment" title="Decrement">
+                            <i class="fa-solid fa-fw fa-plus"></i>
+                        </button>
+                    </span>
                     <small>Increment it to change password (forgot, leak, etc.)</small>
                 </label>
 

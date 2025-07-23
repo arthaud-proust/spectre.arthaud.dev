@@ -127,10 +127,12 @@ main[data-loading="true"] #user form {
     border-radius: 10px;
     overflow: hidden;
 }
-#siteResult.empty {
+
+#siteResult.empty, [disabled] {
     pointer-events: none;
     user-select: none; 
 }
+
 #siteResult button[type="button"] {
     border:none;
     border-left: 1px solid var(--blue-800);
@@ -199,7 +201,7 @@ textarea {
     background: var(--blue-800);
     border: 1px solid var(--blue-900);
     border-radius: 10px;
-    padding: .5rem;
+    padding: .8rem;
 }
 
 small {
@@ -242,6 +244,16 @@ label input[type="radio"] {
     display: inline-block;
     width: auto;
     margin-right: 0.2rem;
+}
+
+span:has(input[type="number"]) {
+    display: inline-flex;
+    width: 100%;
+    gap: .4rem;
+}
+
+span:has(input[type="number"]) button {
+    width: min-content;
 }
 
 hr {
