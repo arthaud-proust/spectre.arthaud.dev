@@ -1,16 +1,16 @@
 class LocalSave {
     key = 'spectre'
 
-    remember(userName, secret, algorithm) {
-        sessionStorage.setItem(this.key, JSON.stringify({userName, secret, algorithm}));
+    remember(userName, algorithm) {
+        localStorage.setItem(this.key, JSON.stringify({userName, algorithm}));
     }
     
     forget() {
-        sessionStorage.removeItem(this.key);
+        localStorage.removeItem(this.key);
     }
     
     retrieve() { 
-        return JSON.parse(sessionStorage.getItem(this.key)) ?? {};
+        return JSON.parse(localStorage.getItem(this.key)) ?? {};
     }
 }
 
@@ -127,9 +127,8 @@ window.addEventListener('DOMContentLoaded', () => {
     updateView();
 
     const retrieved = localSave.retrieve();
-    if(retrieved.userName && retrieved.secret && retrieved.algorithm) {
-        spectre.authenticate(retrieved.userName, retrieved.secret, retrieved.algorithm);
-    }
+    if(retrieved.userName) userNameInput.value = retrieved.userName
+    if(retrieved.algorithm) userAlgorithmInput.value = retrieved.algorithm
 
     const siteCounterValue = ()=>{
         const value = parseInt(siteCounterInput.value)
@@ -169,7 +168,7 @@ window.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         
         if (userRememberMeCheckbox.checked) {
-            localSave.remember(userNameInput.value, userSecretInput.value, userAlgorithmInput.value);
+            localSave.remember(userNameInput.value, userAlgorithmInput.value);
         }
 
         spectre.authenticate(userNameInput.value, userSecretInput.value, userAlgorithmInput.value);

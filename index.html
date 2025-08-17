@@ -19,14 +19,14 @@
     <main data-loading="false">
         <section id="user" aria-hidden="ƒalse">
             <form>
-                <label>
+                <label id="username-label">
                     <i class="fa-duotone fa-fw fa-user-large"></i>
                     Full Name
                     <input required type="text" name="userName" placeholder="eg. Robert Lee Mitchell"
                         autocomplete="username">
                 </label>
 
-                <label>
+                <label id="user-secret-label">
                     <i class="fa-duotone fa-fw fa-user-lock"></i>
                     Spectre Secret
                     <div id="userSecretContainer">
@@ -40,7 +40,7 @@
                     </div>
                 </label>
 
-                <label>
+                <label id="algorithm-version-label">
                     <i class="fa-duotone fa-fw fa-rectangle-vertical-history"></i>
                     Algorithm Version
                     <select required name="algorithmVersion">
@@ -53,12 +53,12 @@
 
                 <label>
                     <input type="checkbox" name="rememberMe">
-                    Remember me until I close the browser
+                    Remember Full Name and Algorithm Version
                 </label>
 
                 <button type="submit">
                     <i class="fa-duotone fa-fw fa-right-to-bracket"></i>
-                    Sign In
+                    Sign in
                 </button>
             </form>
 
@@ -81,7 +81,8 @@
                     <i class="fa-duotone fa-fw fa-hashtag"></i>
                     Counter
                     <span>
-                        <input type="number" name="siteCounter" placeholder="1" min="1" max="100" value="1" class="half" />
+                        <input type="number" name="siteCounter" placeholder="1" min="1" max="100" value="1"
+                            class="half" />
                         <button type="button" id="siteCounter-decrement" title="Increment">
                             <i class="fa-solid fa-fw fa-minus"></i>
                         </button>
