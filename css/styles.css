@@ -125,7 +125,7 @@ main[data-loading="true"] #user form {
     align-items: center;
 }
 
-#identicon div {
+#identicon div:first-child {
     color: var(--identicon-color);
     text-align: center;
     background: var(--blue-950);
@@ -266,6 +266,14 @@ button {
 
 button:hover {
     --color: var(--blue-600);
+}
+
+button:active {
+    --color: var(--blue-500);
+}
+
+button:disabled {
+    opacity: 0.5;
 }
 
 label input,

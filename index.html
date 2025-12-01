@@ -37,17 +37,16 @@
             <form>
                 <label id="username-label">
                     <i class="fa-duotone fa-fw fa-user-large"></i>
-                    Full Name
-                    <input required type="text" name="userName" placeholder="eg. Robert Lee Mitchell"
-                        autocomplete="username">
+                    Prénom Nom
+                    <input required type="text" name="userName" placeholder="Ex: Paul Verlaine" autocomplete="username">
                 </label>
 
                 <label id="user-secret-label">
                     <i class="fa-duotone fa-fw fa-user-lock"></i>
-                    Spectre Secret
+                    Mot de passe maître
                     <div id="userSecretContainer">
-                        <input required type="password" name="userSecret" placeholder="eg. banana colored duckling"
-                            autocomplete="current-password">
+                        <input required type="password" name="userSecret"
+                            placeholder="Ex: tartuffe et sa banane colorée du jeudi" autocomplete="current-password">
 
                         <button type="button">
                             <i class="fa-duotone fa-fw fa-eye"></i>
@@ -56,7 +55,7 @@
                     </div>
                 </label>
 
-                <label id="algorithm-version-label">
+                <label id="algorithm-version-label" aria-hidden="true">
                     <i class="fa-duotone fa-fw fa-rectangle-vertical-history"></i>
                     Algorithm Version
                     <select required name="algorithmVersion">
@@ -69,12 +68,12 @@
 
                 <label>
                     <input type="checkbox" name="rememberMe">
-                    Remember Full Name and Algorithm Version
+                    Se souvenir de mon prénom
                 </label>
 
                 <button type="submit">
                     <i class="fa-duotone fa-fw fa-right-to-bracket"></i>
-                    Sign in
+                    Se connecter
                 </button>
             </form>
 
@@ -94,25 +93,29 @@
                     <span class="rightArm"></span>
                 </div>
 
-                <p>
-                    This identicon is defined by credentials you entered. If it differ from last time, you have made a
-                    typo.
-                </p>
+                <div>
+                    <p>
+                        Identicon
+                    </p>
+                    <small>
+                        Cette icône correspond aux identifiants que vous avez entré.
+                        C'est un moyen rapide de vérifier que vous n'avez pas fait d'erreur.
+                    </small>
+                </div>
 
             </section>
 
             <form>
                 <label>
                     <i class="fa-duotone fa-fw fa-globe"></i>
-                    Service Name
-                    <input type="text" name="siteName" placeholder="eg. google">
-                    <small>You can precise the url if you want (eg. google.com)</small>
+                    Nom du service
+                    <input type="text" name="siteName" placeholder="Ex: google">
                 </label>
 
 
                 <label>
                     <i class="fa-duotone fa-fw fa-hashtag"></i>
-                    Counter
+                    Compteur
                     <span>
                         <input type="number" name="siteCounter" placeholder="1" min="1" max="100" value="1"
                             class="half" />
@@ -123,22 +126,22 @@
                             <i class="fa-solid fa-fw fa-plus"></i>
                         </button>
                     </span>
-                    <small>Increment it to change password (forgot, leak, etc.)</small>
+                    <small>Changez-le pour changer le mot de passe (perte, piratage)</small>
                 </label>
 
                 <label>
                     <i class="fa-duotone fa-fw fa-rectangle-vertical-history"></i>
-                    Password Type
+                    Type de mot de passe
                     <select name="siteType"></select>
                 </label>
 
                 <div>
-                    Result
+                    Mot de passe généré
 
                     <div id="siteResult">
                         <button type="submit">
                             <i class="fa-duotone fa-fw fa-copy"></i>
-                            <input type="password" disabled placeholder="eg. 1lsj19)#akWJ" />
+                            <input type="password" disabled placeholder="Tapez du texte pour le génerer" />
                         </button>
 
                         <button type="button">
@@ -149,7 +152,7 @@
 
                     <p id="siteResultCopied" aria-hidden="true">
                         <i class="fa-duotone fa-fw fa-lg fa-circle-check"></i>
-                        Copied !
+                        Copié!
                     </p>
                 </div>
             </form>
@@ -159,13 +162,13 @@
             <p>
                 <button type="submit" id="signout">
                     <i class="fa-duotone fa-fw fa-right-from-bracket"></i>
-                    Sign Out
+                    Se déconnecter
                 </button>
             </p>
         </section>
 
         <footer>
-            <small>Your information remains 100% offline</small>
+            <small>Vos informations sont 100% hors-ligne</small>
         </footer>
     </main>
 

@@ -124,9 +124,21 @@ window.addEventListener('DOMContentLoaded', () => {
         } else {
             user.setAttribute("aria-hidden", false);
             site.setAttribute("aria-hidden", true);
-            userAlgorithmInput.value = spectre.algorithm.current;
             siteNameInput.value = null;
-            userNameInput.focus()
+
+            const retrieved = localSave.retrieve();
+            userNameInput.value = retrieved.userName ?? ""
+            userAlgorithmInput.value = retrieved.algorithm ?? spectre.algorithm.current;
+
+            if(retrieved.userName && retrieved.algorithm) {
+                userRememberMeCheckbox.checked = true
+            }
+
+            if(userNameInput.value !== "") {
+                userSecretInput.focus()
+            } else {
+                userNameInput.focus()
+            }
         }
     }
 
@@ -140,11 +152,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
     updateDefaults();
     spectre.observers.push(updateView);
+
     updateView();
 
-    const retrieved = localSave.retrieve();
-    if(retrieved.userName) userNameInput.value = retrieved.userName
-    if(retrieved.algorithm) userAlgorithmInput.value = retrieved.algorithm
 
     const siteCounterValue = ()=>{
         const value = parseInt(siteCounterInput.value)
@@ -235,10 +245,6 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     window.addEventListener('focus', ()=>{
-        if(site.getAttribute('aria-hidden') === 'false') {
-            siteNameInput.focus();
-        } else {
-            userNameInput.focus();
-        }
+        updateView()
     })
 });
