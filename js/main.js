@@ -39,6 +39,12 @@ window.addEventListener('DOMContentLoaded', () => {
     const userAlgorithmInput = user.querySelector('[name="algorithmVersion"]');
     const userRememberMeCheckbox = user.querySelector('[name="rememberMe"]');
 
+    const identicon = document.getElementById('identicon');
+    const identiconAccessory = identicon.querySelector('.accessory');
+    const identiconLeftArm = identicon.querySelector('.leftArm');
+    const identiconBody = identicon.querySelector('.body');
+    const identiconRightArm = identicon.querySelector('.rightArm');
+
     const site = document.getElementById('site');
     const siteForm = site.querySelector('form');
     const siteNameInput = site.querySelector('[name="siteName"]');
@@ -105,6 +111,7 @@ window.addEventListener('DOMContentLoaded', () => {
         userNameInput.value = spectre.operations.user.userName;
         userSecretInput.value = null;
 
+        
         const result = spectre.result(siteNameInput.value, getSelectedPurposeInput()?.value);
         siteResult.classList.toggle("empty", result == null);
         siteResultInput.value = result ?? "";
@@ -112,6 +119,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (spectre.operations.user.authenticated) {
             user.setAttribute("aria-hidden", true);
             site.setAttribute("aria-hidden", false);
+            updateIdenticon(spectre.operations.user.identicon)
             siteNameInput.focus()
         } else {
             user.setAttribute("aria-hidden", false);
@@ -120,6 +128,14 @@ window.addEventListener('DOMContentLoaded', () => {
             siteNameInput.value = null;
             userNameInput.focus()
         }
+    }
+
+    function updateIdenticon(identiconValue) {
+        identicon.style.setProperty("--identicon-color", identiconValue.color);
+        identiconAccessory.innerText = identiconValue.accessory
+        identiconLeftArm.innerText = identiconValue.leftArm
+        identiconBody.innerText = identiconValue.body
+        identiconRightArm.innerText = identiconValue.rightArm
     }
 
     updateDefaults();

@@ -230,11 +230,15 @@ spectre.newIdenticon = Object.freeze(async(userName, userSecret) => {
     }, false, ["sign"])
     let seed = await crypto.subtle.sign("HMAC", key, spectre.encoder.encode(userName))
 
+    const view = new Int32Array(seed);
+
+    console.log(new Int32Array(seed), new Int16Array(seed),new Int8Array(seed))
+
     return {
-        "leftArm": spectre.identicons.leftArm[seed[0] % spectre.identicons.leftArm.length],
-        "body": spectre.identicons.body[seed[1] % spectre.identicons.body.length],
-        "rightArm": spectre.identicons.rightArm[seed[2] % spectre.identicons.rightArm.length],
-        "accessory": spectre.identicons.accessory[seed[3] % spectre.identicons.accessory.length],
-        "color": spectre.identicons.accessory[seed[4] % spectre.identicons.color.length],
+       "leftArm": spectre.identicons.leftArm.at(view[0] % spectre.identicons.leftArm.length),
+        "body": spectre.identicons.body.at(view[1] % spectre.identicons.body.length),
+        "rightArm": spectre.identicons.rightArm.at(view[2] % spectre.identicons.rightArm.length),
+        "accessory": spectre.identicons.accessory.at(view[3] % spectre.identicons.accessory.length),
+        "color": spectre.identicons.color.at(view[4] % spectre.identicons.color.length),
     }
 });

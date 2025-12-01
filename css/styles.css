@@ -120,6 +120,43 @@ main[data-loading="true"] #user form {
     border-left: none;
 }
 
+#identicon {
+    flex-direction: row;
+    align-items: center;
+}
+
+#identicon div {
+    color: var(--identicon-color);
+    text-align: center;
+    background: var(--blue-950);
+    gap: 0;
+    width: min-content;
+    border-radius: 4px;
+    display: grid;
+    grid-template:
+        ". a ." 1fr
+        "b c d" 1fr / 1fr 1fr 1fr;
+}
+#identicon span {
+    font-size: 2rem;
+
+}
+#identicon span:nth-child(1) {
+    grid-area: a;
+}
+
+#identicon span:nth-child(2) {
+    grid-area: b;
+}
+
+#identicon span:nth-child(3) {
+    grid-area: c;
+}
+
+#identicon span:nth-child(4) {
+    grid-area: d;
+}
+
 #siteResult {
     margin-top: .4rem;
     display: flex;
