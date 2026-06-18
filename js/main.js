@@ -1,16 +1,69 @@
 class LocalSave {
     key = 'spectre'
 
+    _read() {
+        const data = JSON.parse(localStorage.getItem(this.key)) ?? {};
+        if (data.biometric) {
+            data.identities = data.identities ?? [];
+            data.identities.push({
+                userName: data.userName,
+                algorithm: data.algorithm,
+                ...data.biometric,
+            });
+            delete data.biometric;
+            this._write(data);
+        }
+        return data;
+    }
+
+    _write(data) {
+        if (!data.userName && !data.algorithm && (!data.identities || data.identities.length === 0)) {
+            localStorage.removeItem(this.key);
+        } else {
+            localStorage.setItem(this.key, JSON.stringify(data));
+        }
+    }
+
     remember(userName, algorithm) {
-        localStorage.setItem(this.key, JSON.stringify({userName, algorithm}));
+        const data = this._read();
+        data.userName = userName;
+        data.algorithm = algorithm;
+        this._write(data);
     }
-    
+
     forget() {
-        localStorage.removeItem(this.key);
+        const data = this._read();
+        delete data.userName;
+        delete data.algorithm;
+        this._write(data);
     }
-    
-    retrieve() { 
-        return JSON.parse(localStorage.getItem(this.key)) ?? {};
+
+    retrieve() {
+        const data = this._read();
+        return { userName: data.userName, algorithm: data.algorithm };
+    }
+
+    getIdentities() {
+        return this._read().identities ?? [];
+    }
+
+    saveIdentity(identity) {
+        const data = this._read();
+        data.identities = (data.identities ?? []).filter(i => i.userName !== identity.userName);
+        data.identities.push(identity);
+        this._write(data);
+    }
+
+    removeIdentity(userName) {
+        const data = this._read();
+        if (!data.identities) return;
+        data.identities = data.identities.filter(i => i.userName !== userName);
+        if (data.identities.length === 0) delete data.identities;
+        this._write(data);
+    }
+
+    findIdentity(userName) {
+        return this.getIdentities().find(i => i.userName === userName) ?? null;
     }
 }
 
@@ -38,6 +91,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const userSecretToggleRevealButton = user.querySelector('#userSecretContainer > button');
     const userAlgorithmInput = user.querySelector('[name="algorithmVersion"]');
     const userRememberMeCheckbox = user.querySelector('[name="rememberMe"]');
+    const useBiometricCheckbox = user.querySelector('[name="useBiometric"]');
+    const useBiometricLabel = document.getElementById('useBiometric-label');
 
     const identicon = document.getElementById('identicon');
     const identiconAccessory = identicon.querySelector('.accessory');
@@ -155,6 +210,105 @@ window.addEventListener('DOMContentLoaded', () => {
 
     updateView();
 
+    const biometric = new BiometricAuth();
+    const identitiesContainer = document.getElementById('biometric-identities');
+    const identitiesList = identitiesContainer.querySelector('ul');
+    let pendingBiometricRegistration = null;
+
+    function renderIdentities() {
+        const identities = localSave.getIdentities();
+        identitiesList.innerHTML = '';
+
+        if (identities.length === 0) {
+            identitiesContainer.hidden = true;
+            return;
+        }
+        identitiesContainer.hidden = false;
+
+        for (const identity of identities) {
+            const li = document.createElement('li');
+
+            const loginButton = document.createElement('button');
+            loginButton.type = 'button';
+            loginButton.innerHTML = '<i class="fa-duotone fa-fw fa-fingerprint"></i> ';
+            loginButton.appendChild(document.createTextNode(identity.userName));
+            loginButton.addEventListener('click', () => loginAsIdentity(identity));
+
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.className = 'remove';
+            removeButton.title = `Supprimer l'authentification biométrique pour ${identity.userName}`;
+            removeButton.innerHTML = '<i class="fa-duotone fa-fw fa-trash"></i>';
+            removeButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (confirm(`Supprimer l'authentification biométrique pour ${identity.userName} ?`)) {
+                    localSave.removeIdentity(identity.userName);
+                    renderIdentities();
+                }
+            });
+
+            li.appendChild(loginButton);
+            li.appendChild(removeButton);
+            identitiesList.appendChild(li);
+        }
+    }
+
+    async function loginAsIdentity(identity) {
+        if (spectre.operations.user.authenticated) return;
+        try {
+            const prfOutput = await biometric.assert(identity.credentialId, identity.prfSalt);
+            const secret = await biometric.decryptSecret(identity.encryptedSecret, identity.iv, prfOutput);
+            spectre.authenticate(identity.userName, secret, identity.algorithm ?? spectre.algorithm.current);
+        } catch (e) {
+            console.warn('Login biométrique annulé ou échoué :', e);
+            userSecretInput.focus();
+        }
+    }
+
+    async function setupBiometricUI() {
+        const supported = await BiometricAuth.isSupported();
+        if (!supported) {
+            identitiesContainer.hidden = true;
+            return;
+        }
+
+        useBiometricLabel.hidden = false;
+        renderIdentities();
+
+        const identities = localSave.getIdentities();
+        if (identities.length === 1) {
+            await loginAsIdentity(identities[0]);
+        }
+    }
+
+    spectre.observers.push(async () => {
+        if (!pendingBiometricRegistration) return;
+        if (!spectre.operations.user.authenticated) return;
+        if (spectre.operations.user.pending) return;
+
+        const { secret, userName, algorithm } = pendingBiometricRegistration;
+        pendingBiometricRegistration = null;
+
+        try {
+            const { credentialId, prfSalt, prfOutput } = await biometric.register(userName);
+            const { ciphertext, iv } = await biometric.encryptSecret(secret, prfOutput);
+            localSave.saveIdentity({
+                userName,
+                algorithm,
+                credentialId,
+                prfSalt,
+                encryptedSecret: ciphertext,
+                iv,
+            });
+            renderIdentities();
+        } catch (e) {
+            console.error('Échec activation biométrique :', e);
+            alert("Impossible d'activer l'authentification biométrique : " + (e.message ?? e));
+        }
+    });
+
+    setupBiometricUI();
+
 
     const siteCounterValue = ()=>{
         const value = parseInt(siteCounterInput.value)
@@ -192,9 +346,17 @@ window.addEventListener('DOMContentLoaded', () => {
 
     userForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        
+
         if (userRememberMeCheckbox.checked) {
             localSave.remember(userNameInput.value, userAlgorithmInput.value);
+        }
+
+        if (useBiometricCheckbox.checked && !localSave.findIdentity(userNameInput.value)) {
+            pendingBiometricRegistration = {
+                secret: userSecretInput.value,
+                userName: userNameInput.value,
+                algorithm: userAlgorithmInput.value,
+            };
         }
 
         spectre.authenticate(userNameInput.value, userSecretInput.value, userAlgorithmInput.value);
@@ -241,7 +403,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     signOutButton.addEventListener('click', () => {
         spectre.invalidate();
-        localSave.forget();
     });
 
     window.addEventListener('focus', ()=>{

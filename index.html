@@ -34,6 +34,12 @@
 <body>
     <main data-loading="false">
         <section id="user" aria-hidden="ƒalse">
+            <div id="biometric-identities" hidden>
+                <p>Se connecter avec l'authentification biométrique</p>
+                <ul></ul>
+                <hr>
+            </div>
+
             <form>
                 <label id="username-label">
                     <i class="fa-duotone fa-fw fa-user-large"></i>
@@ -69,6 +75,11 @@
                 <label>
                     <input type="checkbox" name="rememberMe">
                     Se souvenir de mon prénom
+                </label>
+
+                <label id="useBiometric-label" hidden>
+                    <input type="checkbox" name="useBiometric">
+                    Activer l'authentification biométrique
                 </label>
 
                 <button type="submit">
@@ -174,6 +185,7 @@
 
     <script defer src="js/spectre/spectre-types.js"></script>
     <script defer src="js/spectre/spectre-service.js"></script>
+    <script defer src="js/biometric.js"></script>
     <script defer src="js/main.js"></script>
 </body>
 
