@@ -27,6 +27,7 @@
     <link rel="shortcut icon" href="/images/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
 
+    <link rel="manifest" href="/manifest.json">
     <link rel="stylesheet" href="plugins/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -187,6 +188,11 @@
     <script defer src="js/spectre/spectre-service.js"></script>
     <script defer src="js/biometric.js"></script>
     <script defer src="js/main.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+        }
+    </script>
 </body>
 
 </html>
