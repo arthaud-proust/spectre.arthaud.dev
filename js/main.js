@@ -17,7 +17,7 @@ class LocalSave {
     }
 
     _write(data) {
-        if (!data.userName && !data.algorithm && (!data.identities || data.identities.length === 0)) {
+        if (!data.userName && !data.algorithm && (!data.identities || data.identities.length === 0) && !data.sites) {
             localStorage.removeItem(this.key);
         } else {
             localStorage.setItem(this.key, JSON.stringify(data));
@@ -64,6 +64,16 @@ class LocalSave {
 
     findIdentity(userName) {
         return this.getIdentities().find(i => i.userName === userName) ?? null;
+    }
+
+    getSiteSettings(id) {
+        return this._read().sites?.[id] ?? null;
+    }
+
+    saveSiteSettings(id, settings) {
+        const data = this._read();
+        data.sites = { ...data.sites, [id]: settings };
+        this._write(data);
     }
 }
 
@@ -205,8 +215,55 @@ window.addEventListener('DOMContentLoaded', () => {
         identiconRightArm.innerText = identiconValue.rightArm
     }
 
+    // Site settings are stored under HMAC(settingsKey, purpose + siteName). settingsKey is a Spectre result,
+    // so it depends on userName + master secret: without them the stored ids reveal neither the user nor the sites.
+    const SETTINGS_SITE = 'spectre-web';
+    const SETTINGS_CONTEXT = 'site-settings';
+    let settingsKeyRequested = false;
+
+    function requestSettingsKey() {
+        const user = spectre.operations.user;
+        if (!user.authenticated) { settingsKeyRequested = false; return; }
+        if (user.pending || settingsKeyRequested) return;
+        settingsKeyRequested = true;
+        spectre.request(SETTINGS_SITE, spectre.resultType.templateMaximum, 1, spectre.purpose.identification, SETTINGS_CONTEXT);
+    }
+
+    async function siteSettingsId(siteName, purpose) {
+        const settingsKey = spectre.result(SETTINGS_SITE, spectre.purpose.identification, SETTINGS_CONTEXT);
+        if (!settingsKey || !siteName) return null;
+        const encoder = new TextEncoder();
+        const key = await crypto.subtle.importKey('raw', encoder.encode(settingsKey), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+        const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(`${purpose}\0${siteName}`));
+        return btoa(String.fromCharCode(...new Uint8Array(signature)));
+    }
+
+    async function restoreSiteSettings() {
+        const siteName = siteNameInput.value;
+        const purpose = getSelectedPurposeInput()?.value;
+        const id = await siteSettingsId(siteName, purpose);
+        // A newer input arrived while hashing: let that call win.
+        if (siteNameInput.value !== siteName || getSelectedPurposeInput()?.value !== purpose) return;
+
+        const saved = id && localSave.getSiteSettings(id);
+        if (saved) {
+            siteCounterInput.value = saved.counter;
+            siteTypeInput.value = saved.type;
+        } else if (id) {
+            updateDefaults();
+        }
+        siteCounterDecrementButton.disabled = !canSiteCounterDecrement();
+        updateSpectre();
+    }
+
+    async function saveSiteSettings() {
+        const id = await siteSettingsId(siteNameInput.value, getSelectedPurposeInput()?.value);
+        if (id) localSave.saveSiteSettings(id, { counter: siteCounterValue(), type: siteTypeInput.value });
+    }
+
     updateDefaults();
     spectre.observers.push(updateView);
+    spectre.observers.push(requestSettingsKey);
 
     updateView();
 
@@ -363,13 +420,11 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    siteNameInput.addEventListener('input', () => {
-        updateSpectre();
-    });
+    siteNameInput.addEventListener('input', restoreSiteSettings);
     sitePurposeInputs.forEach(el=>{
         el.addEventListener('input', () => {
             updateDefaults();
-            updateSpectre();
+            restoreSiteSettings();
         });
     });
     siteCounterInput.addEventListener('input', () => {
@@ -391,6 +446,7 @@ window.addEventListener('DOMContentLoaded', () => {
         e.preventDefault()
        
         siteResultInput.select()
+        if (siteResultInput.value) saveSiteSettings();
         if (navigator.clipboard.writeText(siteResultInput.value) || document.execCommand('copy')) {
             siteResultCopied.setAttribute('aria-hidden', false);
             siteResult.setAttribute('aria-hidden', true);

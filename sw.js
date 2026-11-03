@@ -1,4 +1,4 @@
-const CACHE_NAME = 'spectre-v1';
+const CACHE_NAME = 'spectre-v2';
 
 const ASSETS = [
     '/',
